@@ -7,6 +7,6 @@ const router = Router();
 //api/v1/healthcheck/test  
 router.route("/").get(healthcheck);
 
-router.route("/test").get(healthcheck);
+//router.route("/test").get(healthcheck);
 
 export default router 
