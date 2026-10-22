@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -254,25 +255,27 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 });
 
 
-const changeCurrentPassword = asyncHandler( async (req, res) => {
-  const {oldPassword, newPassword} = req.body
+const changeCurrentPassword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
 
-    
+  if (!oldPassword || !newPassword) {
+    throw new ApiError(400, "Both old password and new password are required");
+  }
 
-    const user = await User.findById(req.user?._id)
-    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword)
+  const user = await User.findById(req.user?._id);
+  const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
 
-    if (!isPasswordCorrect) {
-        throw new ApiError(400, "Invalid old password")
-    }
+  if (!isPasswordCorrect) {
+    throw new ApiError(400, "Invalid old password");
+  }
 
-    user.password = newPassword
-    await user.save({validateBeforeSave: false})
+  user.password = newPassword;
+  await user.save({ validateBeforeSave: false });
 
-    return res
+  return res
     .status(200)
-    .json(new ApiResponse(200, {}, "Password changed successfully"))
-})
+    .json(new ApiResponse(200, {}, "Password changed successfully"));
+});
 
 
 
@@ -335,7 +338,7 @@ const updateUserAvatar = asyncHandler(async(req, res) => {
             }
         },
         {new: true}
-    ).select("-password -refershToken")
+    ).select("-password -refreshToken")
 
     return res
     .status(200)
@@ -358,7 +361,7 @@ const updateUserCoverImage = asyncHandler(async(req, res) => {
     const coverImage = await uploadOnCloudinary(coverImageLocalPath)
 
     if (!coverImage.url) {
-        throw new ApiError(400, "Error while uploading on avatar")
+        throw new ApiError(400, "Error while uploading cover image")
         
     }
 
@@ -499,7 +502,7 @@ const getWatchHistory = asyncHandler(async(req, res) => {
     .json(
         new ApiResponse(
             200,
-            user[0].watchHistory,
+            user[0]?.watchHistory || [],
             "Watch history fetched successfully"
         )
     )
