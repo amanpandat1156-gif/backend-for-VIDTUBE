@@ -124,7 +124,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
-const loginUser = asyncHandler(async (req, res) => {
+const loginUser = asyncHandler(async (req, res) => { 
   // get data from body
   const { email, username, password } = req.body;
 
@@ -203,6 +203,8 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "User logged out successfully"));
 });
 
+
+
 const refreshAccessToken = asyncHandler(async (req, res) => {
   const incomingRefreshToken =
     req.cookies?.refreshToken || req.body?.refreshToken;
@@ -251,4 +253,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken };
+export { registerUser, 
+  loginUser, 
+  logoutUser,
+   refreshAccessToken 
+  };
